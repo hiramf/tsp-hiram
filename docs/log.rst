@@ -34,7 +34,7 @@ Day 3: 5/1/2020
   1. Create coordinates to use for tests
   2. Choose an algorithm to use for my soution. Algorithm must allow setting a maximum distance for the 2nd requirement.
 
-+ Decided to use the `python-mip library <https://python-mip.readthedocs.io/en/latest/examples.html/>`_
++ Decided to use the `python-mip library <https://python-mip.readthedocs.io/en/latest/examples.html>`_
 
   + Doesn't require coding my own solution
   + Branch and Cut is the current record holder for the TSP, `solving a problem with 85,900 cities <https://en.wikipedia.org/wiki/Travelling_salesman_problem#Computing_a_solution/>`_.
