@@ -1,6 +1,7 @@
-import pytest
-from tsp_hiram import tsp
 import numpy as np
+import pytest
+
+from tsp_hiram import tsp
 
 
 @pytest.fixture
