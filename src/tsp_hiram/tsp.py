@@ -7,7 +7,6 @@ from typing import (
     NamedTuple,
     Set,
     Tuple,
-    Union,
 )
 
 import numpy as np
@@ -31,7 +30,8 @@ class RouteStop(NamedTuple):
 
 
 def compute_euclidean_distance_matrix(coordinates: CoordinatesVector) -> DistanceMatrixDict:
-    """Creates a matrix of euclidian distances between the coordinates. Modified from https://developers.google.com/optimization/routing/tsp#euclid_distance
+    """Creates a matrix of euclidian distances between the coordinates.
+    Modified from https://developers.google.com/optimization/routing/tsp#euclid_distance
 
     :param coordinates: A list of 2D coordinates
     :type coordinates: CoordinatesVector
