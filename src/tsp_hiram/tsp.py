@@ -1,22 +1,9 @@
-from itertools import product
 import math
-from typing import (
-    Dict,
-    List,
-    Iterator,
-    NamedTuple,
-    Set,
-    Tuple,
-)
+from itertools import product
+from typing import Dict, Iterator, List, NamedTuple, Set, Tuple
 
 import numpy as np
-from mip import (
-    BINARY,
-    minimize,
-    Model,
-    Var,
-    xsum,
-)
+from mip import BINARY, Model, Var, minimize, xsum
 
 Coordinate = Tuple[int, int]
 CoordinatesVector = List[Coordinate]
