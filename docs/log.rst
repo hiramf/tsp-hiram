@@ -39,6 +39,10 @@ Day 3: 5/1/2020
   + Doesn't require coding my own solution
   + Branch and Cut is the current record holder for the TSP, `solving a problem with 85,900 cities <https://en.wikipedia.org/wiki/Travelling_salesman_problem#Computing_a_solution/>`_.
   + Allows defining a custom objective function, which will satisfy both problems
+  + Implemented preliminary solution working and corresponding tests for solving the basic TSP problem
+  + Ensured syntax is correct with isort and pep.
+  + Make sure Travis CI builds all succeed
+  + I modified the code from Google OR for computing the distance matrix. It was creating a dictionary, but the mip example just used a regular list of lists. It made more sense to initialize a numpy.zeros array and fill in the distances with integer indexing.
 
 
 
