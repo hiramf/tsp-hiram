@@ -1,7 +1,13 @@
+import random
+import math
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
 N = ['Antwerp', 'Bruges', 'C-Mine', 'Dinant', 'Ghent',
-          'Grand-Place de Bruxelles', 'Hasselt', 'Leuven',
-          'Mechelen', 'Mons', 'Montagne de Bueren', 'Namur',
-          'Remouchamps', 'Waterloo']
+     'Grand-Place de Bruxelles', 'Hasselt', 'Leuven',
+     'Mechelen', 'Mons', 'Montagne de Bueren', 'Namur',
+     'Remouchamps', 'Waterloo']
 
 n, V = len(N), set(range(len(N)))
 
@@ -24,53 +30,81 @@ dists = [[83, 81, 113, 52, 42, 73, 44, 23, 91, 105, 90, 124, 57],
 
 # distances matrix
 distance_matrix = [[0 if i == j
-      else dists[i][j-i-1] if j > i
-      else dists[j][i-j-1]
-      for j in V] for i in V]
+                    else dists[i][j-i-1] if j > i
+                    else dists[j][i-j-1]
+                    for j in V] for i in V]
+
 
 def get_shortest_edge(i, visited, distance_matrix):
     return min([distance_matrix[i][j] for j in V if visited[i][j] == False])
 
 max_distance = 90
 
+def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int = None) -> List:
+    """[summary]
 
-def nearest_neighbor_path(start, max_distance, distance_matrix):
-    distance = 0
+    :param distance_matrix: Simple nearest neighbor algorithm for finding a feasable path for the Traveling Salesman Problem.
+    :type distance_matrix: List
+    :param start: The node to start to search for a solution, defaults to a randomly chosen node
+    :type start: int, optional
+    :param max_distance: The maximium distance of the path. If not specific, will find a full path. Otherwise, it will constrain the total cost of the path to be less than or equal to max_distance, defaults to None
+    :type max_distance: int, optional
+    :return: A feasable solution for the path satisfying the parameters provided.
+    :rtype: List
+    """
 
-    # Initialize all vertices as unvisited.
-    visited = [[True if i==j else False for j in V] for i in V]
+
+    if start == None:
+        start = random.randrange(0, len(distance_matrix))
+        logging.info(f'Choosing random starting node: {start}.')
+
+    if max_distance == None:
+        max_distance = math.inf
 
     i = start
     route = [i]
+
+    # Initialize all vertices as unvisited except for self
+    visited = [False for v in range(len(distance_matrix))]
+    visited[start] = True
     nodes_visited = 1
 
+    distance = 0
     while distance <= max_distance:
-        print(f'current_distance: {distance}')
-        # Find out the shortest edge connecting the current vertex u and an unvisited vertex v.
-        shortest_edge = get_shortest_edge(i, visited, distance_matrix)
 
-        # can we get home?
-        go_home_cost = distance_matrix[i][start]
-        if distance + go_home_cost + shortest_edge  >= max_distance:
-            print(f'lets go home: {distance} + {go_home_cost}')
-            distance += go_home_cost
+        # Have we visited all the nodes?
+        if sum(visited) == len(visited):
+            distance += distance_matrix[i][start]
             break
+
         else:
+            # Find out the shortest edge connecting the current vertex u and an unvisited vertex v
+            shortest_edge = min([distance_matrix[i][j] for j in V if visited[j] == False])
 
-            distance += shortest_edge
-            nearest = [j for j in V if distance_matrix[i][j] == shortest_edge]
-            if len(nearest) > 1:
-                print(f'Warning: more than one nearest neighbor for ({i},{j}')
-            j = nearest[0]
-            nodes_visited += 1
-            visited[i][j] = visited[j][i] = True
+            # can we get home?
+            go_home_cost = distance_matrix[i][start]
+            if distance + go_home_cost + shortest_edge >= max_distance:
+                logging.info(f'lets go home: {distance} + {go_home_cost}')
+                distance += go_home_cost
+                break
 
+            else:
+                distance += shortest_edge
+                nearest = [j for j in V if distance_matrix[i][j] == shortest_edge]
+                j = nearest[0]
 
-            i = j
-            route.append(i)
+                if len(nearest) > 1:
+                    j = random.choice(nearest)
+                    logging.info(f'Warning: more than one nearest neighbor for ({i},{j}). Choosing randomly.')
 
-    print(f'{len(route)} nodes visited for distance {distance}: {route}')
+                nodes_visited += 1
+                visited[j] = True
+                route.append(j)
+                i = j
+
+    logging.info(f'{len(route)} nodes visited for distance {distance}: {route}')
     return route
 
+
 for vertex in V:
-    nearest_neighbor_path(vertex, 90, distance_matrix)
+    route = nearest_neighbor_path(distance_matrix, start=vertex)
