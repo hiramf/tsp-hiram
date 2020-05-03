@@ -44,5 +44,12 @@ Day 3: 5/1/2020
   + Make sure Travis CI builds all succeed
   + I modified the code from Google OR for computing the distance matrix. It was creating a dictionary, but the mip example just used a regular list of lists. It made more sense to initialize a numpy.zeros array and fill in the distances with integer indexing.
 
+Day 4: 5/2/2020
+################
++ Did some refactoring based on the tests from the python-pip library.
++ I am now indexing the nodes differently to make it more readable, in my opinion.
++ Having trouble with the second problem in the challenge (most nodes, fixed distance). The algorithm I am using is returning a non-contiguous path. Posted a `question on github <https://github.com/coin-or/python-mip/issues/96>`_. Will potentially add a test for this.
++ After trying for the full day, I decided to implement my own `nearest-nieghbors algorithm <https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm>`_ for the second solution. Was able to complete in a couple of hours, but it's a brute force approach. Will add tests and refactor tomorrow.
+
 
 
