@@ -15,11 +15,6 @@ Matrix = List[List[int]]
 MipVarMatrix = List[List[Var]]
 
 
-class RouteStop(NamedTuple):
-    from_node: int
-    to_node: int
-
-
 def compute_euclidean_distance_matrix(coordinates: CoordinatesVector) -> Matrix:
     """Creates a matrix of euclidian distances between the coordinates.
     Modified from https://developers.google.com/optimization/routing/tsp#euclid_distance
