@@ -52,5 +52,28 @@ Day 4: 5/2/2020
 + After trying for the full day, I decided to implement my own `nearest-nieghbors algorithm <https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm>`_ for the second solution. Was able to complete in a couple of hours, but it's a brute force approach. Will add tests and refactor tomorrow.=
 + Also sent in a question about whether the solution for the second problem needs to be a closed loop or not.
 
+Day 5: 5/3/2020
+################
++ There are a lot of things I could do next, in roughly this order of priority:
 
+  + Clean up code and get it ready for production
+
+    + refactor nearest_neighbors
+    + clean up and finalize branch_and_cut
+    + document code
+    + figure out best way to return render solution routes
+    + write tests
+
+  + write CLI
+  + Create a Dockerfile for deployment as an API
+  + Visualize routes with networkx
+  + Parallelize nearest_neighbour_algorithm with dash
+
+Day 6: 5/3/2020
+################
++ Refactoring the nearest_neighbors algorithm took a lot longer than expected.
++ I added the ability to find a feasible solution for the TSP using nearest neighbors.
++ I also refactored how to process the results. I am now using a matrix representing the edges used in the solution. This way, the output for the branch_and_cut method and the nearest_neighbors method are the same.
++ I did some testing and np.zeros in computing the euclidian matrix did not improve speed, so I initialized a list of lists full of zeros with a list comprehension.
++ I added a scaling feature to the distance matrix because rounding can cause problems.
 
