@@ -42,21 +42,11 @@ def test_branch_and_cut(distance_matrix_mip):
     assert int(distance) == 547
 
 def test_nearest_neighbor_max_distance(distance_matrix_mip):
-    best_distance=0
-    best_route=None
+    route_matrix, distance = tsp.nearest_neighbor_path(distance_matrix_mip, start=5, max_distance=200)
 
-    for vertex in range(len(distance_matrix_mip)):
-        route_matrix, distance=tsp.nearest_neighbor_path(
-            distance_matrix_mip,
-            max_distance = 200,
-            start = vertex)
-
-        if distance > best_distance:
-            best_distance=distance
-            best_route=route_matrix
-
-    assert best_distance == 199
-    assert tsp.get_edges_from_route_matrix(best_route) == [(0, 8), (8, 4), (4, 1), (1, 0)]
+    assert np.sum(route_matrix) == 6
+    assert distance == 194
+    assert tsp.get_edges_from_route_matrix(route_matrix) == [(0, 4), (4, 5), (5, 13), (13, 7), (7, 8), (8, 0)]
 
 def test_nearest_neighbor_full_route(distance_matrix_mip):
     best_distance=math.inf
