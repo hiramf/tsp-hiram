@@ -188,3 +188,32 @@ def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int 
 
     logging.info(f'{sum(visited)} nodes visited for distance {distance}: {route}')
     return route_matrix, distance
+
+def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20):
+
+    # use nearest neighbors algorithm
+    if max_distance:
+        logging.info(f'Constraining solution to max distance {max_distance}')
+        if starting_node:
+            logging.info(f'Starting at node {starting_node}')
+            route_matrix, distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start = starting_node)
+
+        else:
+            # TODO: allow for returning multiple solutions if there is more than one. Currently only returns first solution that satisfies the constraint max_distance.
+            most_nodes = 0
+            route_matrix = None
+            distance = None
+            for vertex in range(len(distance_matrix)):
+                _route_matrix, _distance = nearest_neighbor_path(distance_matrix, max_distance = max_distance, start = vertex)
+                logging.info(f'Solution: {n_nodes} for {distance} from start {vertex}')
+                n_nodes = np.sum(_route_matrix)
+
+                if n_nodes > most_nodes:
+                    most_nodes = n_nodes
+                    route_matrix = _route_matrix
+                    distance = _distance
+
+    else:
+        route_matrix, distance = branch_and_cut(distance_matrix)
+
+    return route_matrix, distance

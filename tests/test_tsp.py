@@ -1,4 +1,5 @@
 import math
+import numpy as np
 import pytest
 
 from tsp_hiram import tsp
@@ -62,3 +63,16 @@ def test_nearest_neighbor_full_route(distance_matrix_mip):
     assert best_distance == 555
     assert tsp.get_edges_from_route_matrix(best_route) == [(0, 8), (8, 5), (5, 13), (13, 7),
                                            (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)]
+
+
+def test_optimize_branch_and_cut(distance_matrix_mip):
+    route_matrix, distance = tsp.optimize(distance_matrix_mip)
+    tour=tsp.get_edges_from_route_matrix(route_matrix)
+    assert tour == [(0, 8), (8, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 3), (3, 11), (11, 9), (9, 13), (13, 5), (5, 4), (4, 1), (1, 0)]
+    assert int(distance) == 547
+
+def test_optimize_max_distance(distance_matrix_mip):
+    route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=5, max_distance=200)
+    assert np.sum(route_matrix) == 6
+    assert distance == 194
+    assert tsp.get_edges_from_route_matrix(route_matrix) == [(0, 4), (4, 5), (5, 13), (13, 7), (7, 8), (8, 0)]
