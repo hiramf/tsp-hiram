@@ -66,20 +66,16 @@ def test_optimize_branch_and_cut(distance_matrix_mip):
     assert tour == [(0, 8), (8, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 3), (3, 11), (11, 9), (9, 13), (13, 5), (5, 4), (4, 1), (1, 0)]
     assert int(distance) == 547
 
-def test_optimize_max_distance(distance_matrix_mip):
-    route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=5, max_distance=200)
-    assert np.sum(route_matrix) == 6
-    assert distance == 194
-    assert tsp.get_edges_from_route_matrix(route_matrix) == [(0, 4), (4, 5), (5, 13), (13, 7), (7, 8), (8, 0)]
-
 @pytest.mark.parametrize("closed", [True, False])
-def test_nearest_neighbor_max_distance(distance_matrix_mip, closed):
-    """Test to see if the route returned visits a node more than once
+@pytest.mark.parametrize("max_distance", [0, 50, 200, 10000])
+def test_max_distance(distance_matrix_mip, closed, max_distance):
+    """Test limiting a solution to a fixed distance for both open and closed loops for various distances.
 
-    :param distance_matrix_mip: [description]
-    :type distance_matrix_mip: [type]
+    :param closed: Closed or open loop solution
+    :type closed: bool
+    :param max_distance: Maximum distance for the solution
+    :type max_distance: int
     """
-    max_distance = 200
     n = len(distance_matrix_mip)
     for i in range(n):
         route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=i, max_distance=max_distance, closed=closed)
