@@ -48,15 +48,29 @@ def get_edges_from_route_matrix(route_matrix: Matrix) -> Tuple:
     :yield: Generator which iteratively finds each subsequent node
     :rtype: Iterator[Tuple]
     """
+
+
+    def get_first_row(route_matrix):
+        for row in range(len(route_matrix)):
+            nodes_in_row = sum(route_matrix[row])
+            if nodes_in_row == 1:
+                return row
+            elif nodes_in_row == 0:
+                continue
+            else:
+                raise ValueError(f'Invalid number of nodes in row: {nodes_in_row}')
+
     def get_next_node_from_row(i, route_matrix):
         for j in range(len(route_matrix)):
             if route_matrix[i][j] == 1:
-                return (i,j)
+                return (i, j)
         raise ValueError(f"Node {i} is not connected to another node.")
+
+
 
     edges = []
     route_length = np.sum(route_matrix)
-    row = 0
+    row = get_first_row(route_matrix)
 
     while len(edges) < route_length:
         try:
@@ -64,8 +78,12 @@ def get_edges_from_route_matrix(route_matrix: Matrix) -> Tuple:
             row = to_node[1]
             edges.append(to_node)
         except ValueError:
-            row += 1
-
+            logging.info('End of open route found.')
+            # transpose the matrix
+            route_matrix = [[route_matrix[j][i] for j in range(len(route_matrix))] for i in range(len(route_matrix))]
+            # reverse the edges
+            edges = [(edges[-1][1], edges[-1][0])]
+            row = edges[0][1]
     return edges
 
 
@@ -81,7 +99,7 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
     """
     n = len(distance_matrix)
     model = Model()
-    model.verbose=0
+    model.verbose = 0
 
     # binary variables indicating if arc (i,j) is used on the route or not
     x = [[model.add_var(name=f'x({i},{j})', var_type=BINARY) for j in range(n)] for i in range(n)]
@@ -114,7 +132,7 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
     return route_matrix, model.objective_value
 
 
-def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
+def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
     """Simple nearest neighbor algorithm for finding a feasable path for the Traveling Salesman Problem.
 
     :param distance_matrix: matrix for the cost of each edge
@@ -157,20 +175,25 @@ def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int 
 
         # Find out the shortest edge connecting the current vertex and an unvisited vertex
         shortest_edge = min([distance_matrix[from_node][to_node] for to_node in range(n) if visited[to_node] == False])
+
         next_nodes = [node for node in range(n) if distance_matrix[from_node][node] == shortest_edge]
         next_nodes = [node for node in next_nodes if visited[node] == False]
         to_node = next_nodes[0]
+        go_home_cost = distance_matrix[to_node][start] + shortest_edge
+
         if len(next_nodes) > 1:
             # more than one nearest neighbor, choosing randomly
             logging.info('more than one neighor found.')
             to_node = random.choice(next_nodes)
 
         # do we have enough to get home if we go the next edge?
-        go_home_cost = distance_matrix[to_node][start]
-        if distance + go_home_cost + shortest_edge >= max_distance:
+        if closed & (distance + go_home_cost >= max_distance):
             # then let's go home
             distance += distance_matrix[from_node][start]
             route_matrix[from_node][start] = 1
+            break
+
+        elif distance + shortest_edge >= max_distance:
             break
 
         else:
@@ -184,14 +207,16 @@ def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int 
     logging.info(f'{sum(visited)} nodes visited for distance {distance}: {route}')
     return route_matrix, distance
 
-def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20):
+
+def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20, closed=True):
 
     # use nearest neighbors algorithm
     if max_distance:
+
         logging.info(f'Constraining solution to max distance {max_distance}')
         if starting_node:
             logging.info(f'Starting at node {starting_node}')
-            route_matrix, distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start = starting_node)
+            route_matrix, distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start=starting_node, closed=closed)
 
         else:
             # TODO: allow for returning multiple solutions if there is more than one. Currently only returns first solution that satisfies the constraint max_distance.
@@ -199,8 +224,8 @@ def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds
             route_matrix = None
             distance = None
             for vertex in range(len(distance_matrix)):
-                _route_matrix, _distance = nearest_neighbor_path(distance_matrix, max_distance = max_distance, start = vertex)
-                logging.info(f'Solution: {n_nodes} for {distance} from start {vertex}')
+                _route_matrix, _distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start=vertex, closed=closed)
+                logging.info(f'Solution: {np.sum(_route_matrix)} for {distance} from start {vertex}')
                 n_nodes = np.sum(_route_matrix)
 
                 if n_nodes > most_nodes:
@@ -209,6 +234,8 @@ def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds
                     distance = _distance
 
     else:
+        if closed == False:
+            logging.info('Closed loop argument is False but no max distance is specified. Running branch and cut.')
         route_matrix, distance = branch_and_cut(distance_matrix)
 
     return route_matrix, distance
