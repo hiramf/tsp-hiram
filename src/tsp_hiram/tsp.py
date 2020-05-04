@@ -162,11 +162,13 @@ def nearest_neighbor_path(distance_matrix, start: int = None, max_distance: int 
 
         # Find out the shortest edge connecting the current vertex and an unvisited vertex
         shortest_edge = min([distance_matrix[from_node][to_node] for to_node in range(n) if visited[to_node] == False])
-        node_of_shortest_edge = [node for node in range(n) if distance_matrix[from_node][node] == shortest_edge]
-        to_node = node_of_shortest_edge[0]
-        if len(node_of_shortest_edge) > 1:
+        next_nodes = [node for node in range(n) if distance_matrix[from_node][node] == shortest_edge]
+        next_nodes = [node for node in next_nodes if visited[node] == False]
+        to_node = next_nodes[0]
+        if len(next_nodes) > 1:
             # more than one nearest neighbor, choosing randomly
-            to_node = random.choice(node_of_shortest_edge)
+            logging.info('more than one neighor found.')
+            to_node = random.choice(next_nodes)
 
         # do we have enough to get home if we go the next edge?
         go_home_cost = distance_matrix[to_node][start]
