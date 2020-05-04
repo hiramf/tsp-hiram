@@ -1,7 +1,7 @@
-import math
-from itertools import product
 import logging
+import math
 import random
+from itertools import product
 from typing import Dict, Iterator, List, NamedTuple, Set, Tuple
 
 import numpy as np
