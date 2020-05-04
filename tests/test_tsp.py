@@ -43,13 +43,6 @@ def test_branch_and_cut(distance_matrix_mip):
     assert tour == [(0, 8), (8, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 3), (3, 11), (11, 9), (9, 13), (13, 5), (5, 4), (4, 1), (1, 0)]
     assert int(distance) == 547
 
-def test_nearest_neighbor_max_distance(distance_matrix_mip):
-    route_matrix, distance = tsp.nearest_neighbor_path(distance_matrix_mip, start=5, max_distance=200)
-
-    assert np.sum(route_matrix) == 6
-    assert distance == 194
-    assert tsp.get_edges_from_route_matrix(route_matrix) == [(0, 4), (4, 5), (5, 13), (13, 7), (7, 8), (8, 0)]
-
 def test_nearest_neighbor_full_route(distance_matrix_mip):
     best_distance=math.inf
     best_route=None
@@ -57,11 +50,12 @@ def test_nearest_neighbor_full_route(distance_matrix_mip):
     for vertex in range(len(distance_matrix_mip)):
         route_matrix, distance=tsp.nearest_neighbor_path(distance_matrix_mip, start = vertex)
 
+        assert np.sum(route_matrix) == len(distance_matrix_mip)
+
         if distance < best_distance:
             best_distance=distance
             best_route=route_matrix
 
-    assert best_distance == 555
     assert tsp.get_edges_from_route_matrix(best_route) == [(0, 8), (8, 5), (5, 13), (13, 7),
                                            (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)]
 
@@ -77,3 +71,18 @@ def test_optimize_max_distance(distance_matrix_mip):
     assert np.sum(route_matrix) == 6
     assert distance == 194
     assert tsp.get_edges_from_route_matrix(route_matrix) == [(0, 4), (4, 5), (5, 13), (13, 7), (7, 8), (8, 0)]
+
+@pytest.mark.parametrize("closed", [True, False])
+def test_nearest_neighbor_max_distance(distance_matrix_mip, closed):
+    """Test to see if the route returned visits a node more than once
+
+    :param distance_matrix_mip: [description]
+    :type distance_matrix_mip: [type]
+    """
+    max_distance = 200
+    n = len(distance_matrix_mip)
+    for i in range(n):
+        route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=i, max_distance=max_distance, closed=closed)
+        route = [ edge[0] for edge in tsp.get_edges_from_route_matrix(route_matrix)]
+        assert len(route) == len(set(route))
+        assert distance <= max_distance
