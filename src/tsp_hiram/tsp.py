@@ -5,7 +5,7 @@ from itertools import product
 from typing import Dict, Iterator, List, NamedTuple, Set, Tuple
 
 import numpy as np
-from mip import BINARY, Model, Var, maximize, minimize, xsum
+from mip import BINARY, Model, Var, maximize, minimize, OptimizationStatus, xsum
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=logging.DEBUG)
 
@@ -66,8 +66,6 @@ def get_edges_from_route_matrix(route_matrix: Matrix) -> Tuple:
                 return (i, j)
         raise ValueError(f"Node {i} is not connected to another node.")
 
-
-
     edges = []
     route_length = np.sum(route_matrix)
     row = get_first_row(route_matrix)
@@ -97,9 +95,9 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
     :return:  A matrix indicating which edges contain the optimal route, the distance of the route
     :rtype: Tuple[Matrix, int]
     """
+
     n = len(distance_matrix)
     model = Model()
-    model.verbose = 0
 
     # binary variables indicating if arc (i,j) is used on the route or not
     x = [[model.add_var(name=f'x({i},{j})', var_type=BINARY) for j in range(n)] for i in range(n)]
@@ -124,12 +122,22 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
         for j in [x for x in range(1, n) if x != i]:
             model += y[i] - (n+1)*x[i][j] >= y[j]-n, 'noSub({},{})'.format(i, j)
 
+    # Use nearest neighbors to find an initial feasable solution
+    feasable_rm, feasable_distance = nearest_neighbor_path(distance_matrix, closed=True)
+    model.start = [(x[i][j], float(feasable_rm[i][j])) for i in range(n) for j in range(n)]
+
     # optimizing
     model.optimize(max_seconds=max_seconds)
-    logging.info(f'Best route found has length {model.objective_value}.')
+    if model.status in [OptimizationStatus.OPTIMAL, OptimizationStatus.FEASIBLE]:
+        logging.info(f'Best route found has length {model.objective_value}.')
 
-    route_matrix = [[int(x[i][j].x) for j in range(n)] for i in range(n)]
-    return route_matrix, model.objective_value
+        route_matrix = [[int(x[i][j].x) for j in range(n)] for i in range(n)]
+        return route_matrix, model.objective_value
+
+    else:
+        logging.info('No solution found.')
+        route_matrix = [[0 for j in range(n)] for i in range(n)]
+        return route_matrix, 0
 
 
 def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
@@ -238,6 +246,6 @@ def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds
     else:
         if closed == False:
             logging.info('Closed loop argument is False but no max distance is specified. Running branch and cut.')
-        route_matrix, distance = branch_and_cut(distance_matrix)
+        route_matrix, distance = branch_and_cut(distance_matrix, max_seconds=max_seconds)
 
     return route_matrix, distance
