@@ -86,4 +86,9 @@ Day 6: 5/4/2020
 + The branch_and_cut algorithm does not respect the max_seconds argument for some reason, could be a problem with the library I am using. I discovered then when trying to solve the problem with the Google OR-Tools data.
 + Since the max_seconds argument doesn't work, I provided an initial feasible solution to the branch_and_cut algorithm using the nearest_neighbors algorithm. This guarantees a solution can be found, even if it is not the optimal solution.
 
+Day 7: 5/5/2020
+################
++ Cleaned up tests and logic
++ Found an edge case where max distance set to zero results in the route being one node going to itself. This is applicable if there are no solutions that meet the requirements.
+
 
