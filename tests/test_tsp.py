@@ -1,7 +1,7 @@
 import math
+import random
 
 import numpy as np
-import random
 import pytest
 
 from tsp_hiram import tsp

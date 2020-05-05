@@ -5,7 +5,7 @@ from itertools import product
 from typing import Dict, Iterator, List, NamedTuple, Set, Tuple
 
 import numpy as np
-from mip import BINARY, Model, Var, maximize, minimize, OptimizationStatus, xsum
+from mip import BINARY, Model, OptimizationStatus, Var, maximize, minimize, xsum
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=logging.DEBUG)
 
