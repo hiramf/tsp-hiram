@@ -35,22 +35,6 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/hiramf/tsp-hiram
 
-.. |version| image:: https://img.shields.io/pypi/v/tsp-hiram.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/tsp-hiram
-
-.. |wheel| image:: https://img.shields.io/pypi/wheel/tsp-hiram.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/tsp-hiram
-
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tsp-hiram.svg
-    :alt: Supported versions
-    :target: https://pypi.org/project/tsp-hiram
-
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tsp-hiram.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/tsp-hiram
-
 .. |commits-since| image:: https://img.shields.io/github/commits-since/hiramf/tsp-hiram/v0.0.0.svg
     :alt: Commits since latest release
     :target: https://github.com/hiramf/tsp-hiram/compare/v0.0.0...master
