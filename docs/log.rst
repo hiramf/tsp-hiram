@@ -37,7 +37,7 @@ Day 3: 5/1/2020
 + Decided to use the `python-mip library <https://python-mip.readthedocs.io/en/latest/examples.html>`_
 
   + Doesn't require coding my own solution
-  + Branch and Cut is the current record holder for the TSP, `solving a problem with 85,900 cities <https://en.wikipedia.org/wiki/Travelling_salesman_problem#Computing_a_solution/>`_.
+  + Branch and Cut is the current record holder for the TSP, `solving a problem with 85,900 cities <https://en.wikipedia.org/wiki/Travelling_salesman_problem#Computing_a_solution>`_.
   + Allows defining a custom objective function, which will satisfy both problems
   + Implemented preliminary solution working and corresponding tests for solving the basic TSP problem
   + Ensured syntax is correct with isort and pep.
@@ -49,7 +49,7 @@ Day 4: 5/2/2020
 + Did some refactoring based on the tests from the python-pip library.
 + I am now indexing the nodes differently to make it more readable, in my opinion.
 + Having trouble with the second problem in the challenge (most nodes, fixed distance). The algorithm I am using is returning a non-contiguous path. Posted a `question on github <https://github.com/coin-or/python-mip/issues/96>`_. Will potentially add a test for this.
-+ After trying for the full day, I decided to implement my own `nearest-nieghbors algorithm <https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm>`_ for the second solution. Was able to complete in a couple of hours, but it's a brute force approach. Will add tests and refactor tomorrow.=
++ After trying for the full day, I decided to implement my own `nearest-nieghbors algorithm <https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm>`_ for the second solution. Was able to complete in a couple of hours, but it's a brute force approach. Will add tests and refactor tomorrow.
 + Also sent in a question about whether the solution for the second problem needs to be a closed loop or not.
 
 Day 5: 5/3/2020
@@ -69,8 +69,6 @@ Day 5: 5/3/2020
   + Visualize routes with networkx
   + Parallelize nearest_neighbour_algorithm with dash
 
-Day 6: 5/3/2020
-################
 + Refactoring the nearest_neighbors algorithm took a lot longer than expected.
 + I added the ability to find a feasible solution for the TSP using nearest neighbors.
 + I also refactored how to process the results. I am now using a matrix representing the edges used in the solution. This way, the output for the branch_and_cut method and the nearest_neighbors method are the same.
@@ -78,4 +76,14 @@ Day 6: 5/3/2020
 + I added a scaling feature to the distance matrix because rounding can cause problems.
 + Found an edge case for the nearest neighbors. If there is more than one nearest neighbor, check to make sure they have not been visited before.
 + Next step is to go from coordinates to solution. Currently, can go from coordinates to matrix, then matrix to solution, but I don't have test data to do both at once.
+
+Day 6: 5/4/2020
+################
++ Got everything working.
++ I made the distance constrained solution return a closed loop, but then found out that an open-loop was okay. That causes some issues in my implementation. They way I was generating the route from the route_matrix couldn't handle an open loop. I was able to fix it to allow both open and closed loops in a route_matrix.
++ Added tests for both open and closed loops.
++ Added test data from the `Google OR-Tools example <https://developers.google.com/optimization/routing/tsp#or-tools>`_ to go from coordinates to a solution.
++ The branch_and_cut algorithm does not respect the max_seconds argument for some reason, could be a problem with the library I am using. I discovered then when trying to solve the problem with the Google OR-Tools data.
++ Since the max_seconds argument doesn't work, I provided an initial feasible solution to the branch_and_cut algorithm using the nearest_neighbors algorithm. This guarantees a solution can be found, even if it is not the optimal solution.
+
 
