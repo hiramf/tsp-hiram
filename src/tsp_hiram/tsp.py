@@ -195,6 +195,7 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
         if closed & (distance + go_home_cost >= max_distance):
             # then let's go home
             distance += distance_matrix[from_node][start]
+            if from_node != start:
             route_matrix[from_node][start] = 1
             break
 
