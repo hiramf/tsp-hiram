@@ -61,6 +61,7 @@ def coordinates_google(scope="module"):
 
     return data
 
+
 @pytest.fixture
 def distance_matrix_mip(scope="module"):
     distances = [
@@ -82,6 +83,7 @@ def distance_matrix_mip(scope="module"):
 
     return distances
 
+
 def test_distance_matrix():
     """Test that computing distances from coordinates gives expected output.
     """
@@ -93,29 +95,33 @@ def test_distance_matrix():
         [24, 18, 0],
     ]
 
+
 def test_branch_and_cut(distance_matrix_mip):
-    """Test the correct solution is returned from the branch and cut algorithm. Can be forwards or backwards (Note: Using nearest_neighbors for an initial feasable solution results in the best solution being returned in a reverse order from without using an initial feasable solution).
+    """Test the correct solution is returned from the branch and cut algorithm according to distance of solution.
     """
-    route_matrix, distance=tsp.branch_and_cut(distance_matrix_mip)
+    route_matrix, distance = tsp.branch_and_cut(distance_matrix_mip)
     assert int(distance) == 547
+
 
 def test_nearest_neighbor_full_route(distance_matrix_mip):
     """Tests that the nearest neighbor algorithm finds the best possible route when iterating over each node as a starting point.
     """
-    best_distance=math.inf
-    best_route=None
+    best_distance = math.inf
+    best_route = None
 
     for vertex in range(len(distance_matrix_mip)):
-        route_matrix, distance=tsp.nearest_neighbor_path(distance_matrix_mip, start = vertex)
+        route_matrix, distance = tsp.nearest_neighbor_path(distance_matrix_mip, start=vertex)
 
         assert np.sum(route_matrix) == len(distance_matrix_mip)
 
         if distance < best_distance:
-            best_distance=distance
-            best_route=route_matrix
+            best_distance = distance
+            best_route = route_matrix
 
-    assert tsp.get_edges_from_route_matrix(best_route) == [(0, 8), (8, 5), (5, 13), (13, 7),
-                                           (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)]
+    assert tsp.get_edges_from_route_matrix(best_route) == [
+        (0, 8), (8, 5), (5, 13), (13, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)
+    ]
+
 
 @pytest.mark.parametrize("closed", [True, False])
 @pytest.mark.parametrize("max_distance", [0, 50, 200, 10000])
@@ -130,9 +136,10 @@ def test_max_distance(distance_matrix_mip, closed, max_distance):
     n = len(distance_matrix_mip)
     for i in range(n):
         route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=i, max_distance=max_distance, closed=closed)
-        route = [ edge[0] for edge in tsp.get_edges_from_route_matrix(route_matrix)]
+        route = [edge[0] for edge in tsp.get_edges_from_route_matrix(route_matrix)]
         assert len(route) == len(set(route))
         assert distance <= max_distance
+
 
 @pytest.mark.parametrize("max_distance", [100, None])
 @pytest.mark.parametrize("closed", [True, False])

@@ -1,11 +1,10 @@
 import logging
 import math
 import random
-from itertools import product
-from typing import Dict, Iterator, List, NamedTuple, Set, Tuple
+from typing import List, Tuple
 
 import numpy as np
-from mip import BINARY, Model, OptimizationStatus, Var, maximize, minimize, xsum
+from mip import BINARY, Model, OptimizationStatus, Var, minimize, xsum
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=logging.DEBUG)
 
@@ -48,7 +47,6 @@ def get_edges_from_route_matrix(route_matrix: Matrix) -> Tuple:
     :yield: Generator which iteratively finds each subsequent node
     :rtype: Iterator[Tuple]
     """
-
 
     def get_first_row(route_matrix):
         for row in range(len(route_matrix)):
@@ -147,7 +145,7 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
     :type distance_matrix: List
     :param start: The node to start to search for a solution, defaults to a randomly chosen node
     :type start: int, optional
-    :param max_distance: The maximium distance of the path. If not specific, will find a full path. Otherwise, it will constrain the total cost of the path to be less than or equal to max_distance, defaults to None
+    :param max_distance: If None, find full path. Otherwise, constrain cost of the path to be >= max_distance, defaults to None
     :type max_distance: int, optional
     :return:  A matrix indicating which edges contain the optimal route, the distance of the route
     :rtype: Tuple[Matrix, int]
@@ -155,11 +153,11 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
 
     n = len(distance_matrix)
 
-    if start == None:
+    if start is None:
         start = random.randrange(0, len(distance_matrix))
         logging.info(f'Choosing random starting node: {start}.')
 
-    if max_distance == None:
+    if max_distance is None:
         max_distance = math.inf
 
     # Initialize all vertices as unvisited except for self
@@ -182,10 +180,10 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
             break
 
         # Find out the shortest edge connecting the current vertex and an unvisited vertex
-        shortest_edge = min([distance_matrix[from_node][to_node] for to_node in range(n) if visited[to_node] == False])
+        shortest_edge = min([distance_matrix[from_node][to_node] for to_node in range(n) if visited[to_node] is False])
 
         next_nodes = [node for node in range(n) if distance_matrix[from_node][node] == shortest_edge]
-        next_nodes = [node for node in next_nodes if visited[node] == False]
+        next_nodes = [node for node in next_nodes if visited[node] is False]
         to_node = next_nodes[0]
         go_home_cost = distance_matrix[to_node][start] + shortest_edge
 
@@ -220,7 +218,7 @@ def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds
     assert len(distance_matrix) == len(distance_matrix[0]), "Invalid distance matrix. Must be 2D square."
 
     # use nearest neighbors algorithm
-    if (max_distance != None) or (use_nearest_neighbors == True):
+    if (max_distance is not None) or (use_nearest_neighbors is True):
         logging.info('Max seconds is specified but not supported for nearest neighbors algorithm.')
 
         logging.info(f'Constraining solution to max distance {max_distance}')
@@ -244,7 +242,7 @@ def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds
                     distance = _distance
 
     else:
-        if closed == False:
+        if closed is False:
             logging.info('Closed loop argument is False but no max distance is specified. Running branch and cut.')
         route_matrix, distance = branch_and_cut(distance_matrix, max_seconds=max_seconds)
 
