@@ -208,10 +208,12 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
     return route_matrix, distance
 
 
-def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20, closed=True):
+def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20, closed=True, use_nearest_neighbors=False):
+    assert len(distance_matrix) == len(distance_matrix[0]), "Invalid distance matrix. Must be 2D square."
 
     # use nearest neighbors algorithm
-    if max_distance != None:
+    if (max_distance != None) or (use_nearest_neighbors == True):
+        logging.info('Max seconds is specified but not supported for nearest neighbors algorithm.')
 
         logging.info(f'Constraining solution to max distance {max_distance}')
         if starting_node:
