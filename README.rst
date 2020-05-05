@@ -13,8 +13,7 @@ Overview
       - | |travis| |appveyor| |requires|
         | |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/tsp-hiram/badge/?style=flat
     :target: https://readthedocs.org/projects/tsp-hiram
     :alt: Documentation Status
