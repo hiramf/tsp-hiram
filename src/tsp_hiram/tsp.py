@@ -198,7 +198,7 @@ def nearest_neighbor_path(distance_matrix: Matrix, closed=False, start: int = No
             # then let's go home
             distance += distance_matrix[from_node][start]
             if from_node != start:
-            route_matrix[from_node][start] = 1
+                route_matrix[from_node][start] = 1
             break
 
         elif distance + shortest_edge >= max_distance:
@@ -216,53 +216,68 @@ def nearest_neighbor_path(distance_matrix: Matrix, closed=False, start: int = No
     return route_matrix, distance
 
 
-def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20, closed=True, use_nearest_neighbors=False):
-    """[summary]
-
-    :param distance_matrix: [description]
-    :type distance_matrix: [type]
-    :param max_distance: [description], defaults to None
-    :type max_distance: [type], optional
-    :param starting_node: [description], defaults to None
-    :type starting_node: [type], optional
-    :param max_seconds: [description], defaults to 20
-    :type max_seconds: int, optional
+def optimize(
+    coordinates: CoordinatesVector,
+    max_distance: int=None,
+    starting_node: int=None,
+    closed: bool=True,
+    use_nearest_neighbors: bool=False
+    ) -> Tuple[Matrix, int]:
+    """Attepmts to find the optimal soultion to a Traveling Salesman problem given a distance matrix and an optional cost-constraint.
+    :param coordinates: List of coordinates to use for each node.
+    :type coordinates: CoordinatesVector
+    :param max_distance: The maximum distance of the solution which attempts to maximize the number of visited nodes, defaults to None
+    :type max_distance: int, optional
+    :param starting_node: The node to start from as the solution. Mostly irrelevant for closed loops unless it improves time to converge, defaults to None
+    :type starting_node: int, optional
     :param closed: [description], defaults to True
     :type closed: bool, optional
-    :param use_nearest_neighbors: [description], defaults to False
+    :param use_nearest_neighbors: Whether to use the nearest_neighbors algorithm to solve the problem, instead of branch_and_cut, if possible, defaults to False
     :type use_nearest_neighbors: bool, optional
-    :return: [description]
-    :rtype: [type]
+    :return: The route of the solution in the form of a list of each edge used, along with the distance of the solution.
+    :rtype: Tuple[Matrix, int]
     """
-    assert len(distance_matrix) == len(distance_matrix[0]), "Invalid distance matrix. Must be 2D square."
+
+
+    distance_matrix = compute_euclidean_distance_matrix(coordinates)
+
+    assert 0 <= starting_node < len(distance_matrix), f"Starting node ({starting_node}) must be within range 0 to {len(distance_matrix)}"
+
 
     # use nearest neighbors algorithm
     if (max_distance is not None) or (use_nearest_neighbors is True):
-        logging.info('Max seconds is specified but not supported for nearest neighbors algorithm.')
 
-        logging.info(f'Constraining solution to max distance {max_distance}')
         if starting_node:
-            logging.info(f'Starting at node {starting_node}')
+            logging.info(f'Starting at node {starting_node}. Algorithm will not iterate to find most optimal solution.')
             route_matrix, distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start=starting_node, closed=closed)
 
         else:
-            # TODO: allow for returning multiple solutions if there is more than one.
             most_nodes = 0
             route_matrix = None
             distance = None
+
             for vertex in range(len(distance_matrix)):
                 _route_matrix, _distance = nearest_neighbor_path(distance_matrix, max_distance=max_distance, start=vertex, closed=closed)
                 logging.info(f'Solution: {np.sum(_route_matrix)} for {distance} from start {vertex}')
                 n_nodes = np.sum(_route_matrix)
 
-                if n_nodes >= most_nodes:
-                    most_nodes = n_nodes
-                    route_matrix = _route_matrix
-                    distance = _distance
+                if max_distance is not None: # optimize for most number of nodes
+                    # TODO: allow for returning multiple solutions if there is more than one.
+                    if n_nodes >= most_nodes:
+                        most_nodes = n_nodes
+                        route_matrix = _route_matrix
+                        distance = _distance
 
-    else:
+                else: #optimize for shortest path
+                    if distance < _distance:
+                        distance = _distance
+                        route_matrix = _route_matrix
+
+    else: # use branch and cut
         if closed is False:
             logging.info('Closed loop argument is False but no max distance is specified. Running branch and cut.')
-        route_matrix, distance = branch_and_cut(distance_matrix, max_seconds=max_seconds)
 
-    return route_matrix, distance
+        route_matrix, distance = branch_and_cut(distance_matrix)
+
+    route = get_edges_from_route_matrix(route_matrix)
+    return route, distance
