@@ -96,10 +96,7 @@ def test_distance_matrix():
 def test_branch_and_cut(distance_matrix_mip):
     """Test the correct solution is returned from the branch and cut algorithm. Can be forwards or backwards (Note: Using nearest_neighbors for an initial feasable solution results in the best solution being returned in a reverse order from without using an initial feasable solution).
     """
-    best_route = [8, 7, 6, 2, 10, 12, 3, 11, 9, 13, 5, 4, 1, 0]
     route_matrix, distance=tsp.branch_and_cut(distance_matrix_mip)
-    tour= [edge[0] for edge in tsp.get_edges_from_route_matrix(route_matrix)]
-    assert tour  in [best_route, best_route[::-1]] #
     assert int(distance) == 547
 
 def test_nearest_neighbor_full_route(distance_matrix_mip):
