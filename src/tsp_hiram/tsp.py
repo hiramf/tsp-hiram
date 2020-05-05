@@ -11,7 +11,6 @@ logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=loggin
 Coordinate = Tuple[int, int]
 CoordinatesVector = List[Coordinate]
 Matrix = List[List[int]]
-MipVarMatrix = List[List[Var]]
 
 
 def compute_euclidean_distance_matrix(coordinates: CoordinatesVector) -> Matrix:
