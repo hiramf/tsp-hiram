@@ -103,8 +103,9 @@ def test_branch_and_cut(distance_matrix_mip):
     assert int(distance) == 547
 
 
-def test_nearest_neighbor_full_route(distance_matrix_mip):
-    """Tests that the nearest neighbor algorithm finds the best possible route when iterating over each node as a starting point.
+def test_nearest_neighbor_shortest_full_route(distance_matrix_mip):
+    """Tests that the nearest neighbor algorithm finds the shortest possible route by iterating over each node as a starting point.
+    Because max_distance is not set, it finds a full-loop.
     """
     best_distance = math.inf
     best_route = None
@@ -112,6 +113,7 @@ def test_nearest_neighbor_full_route(distance_matrix_mip):
     for vertex in range(len(distance_matrix_mip)):
         route_matrix, distance = tsp.nearest_neighbor_path(distance_matrix_mip, start=vertex)
 
+        # Make sure the route touches all the nodes
         assert np.sum(route_matrix) == len(distance_matrix_mip)
 
         if distance < best_distance:
@@ -122,29 +124,52 @@ def test_nearest_neighbor_full_route(distance_matrix_mip):
         (0, 8), (8, 5), (5, 13), (13, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)
     ]
 
+@pytest.mark.parametrize("max_distance,expected", [(0,0), (150,6), (200,7), (10000,14)])
+def test_nearest_neighbor_most_nodes_open(distance_matrix_mip, max_distance, expected):
+    """Test the goal of finding the most number of nodes given a fixed distance.
+    """
+    most_nodes = 0
+    for vertex in range(len(distance_matrix_mip)):
+        route_matrix, _ = tsp.nearest_neighbor_path(distance_matrix_mip, closed=False, max_distance=max_distance, start=vertex)
+        route = tsp.get_edges_from_route_matrix(route_matrix)
+
+        if len(route) > most_nodes:
+            most_nodes = len(route)
+
+    assert most_nodes == expected
+
+@pytest.mark.parametrize("max_distance,expected", [(0,0), (150,5), (200,6), (10000,14)])
+def test_nearest_neighbor_most_nodes_closed(distance_matrix_mip, max_distance, expected):
+    """Test the goal of finding the most number of nodes given a fixed distance.
+    """
+    most_nodes = 0
+    for vertex in range(len(distance_matrix_mip)):
+        route_matrix, _ = tsp.nearest_neighbor_path(distance_matrix_mip, closed=True, max_distance=max_distance, start=vertex)
+        route = tsp.get_edges_from_route_matrix(route_matrix)
+
+        if len(route) > most_nodes:
+            most_nodes = len(route)
+
+    assert most_nodes == expected
+
 
 @pytest.mark.parametrize("closed", [True, False])
 @pytest.mark.parametrize("max_distance", [0, 50, 200, 10000])
-def test_max_distance(distance_matrix_mip, closed, max_distance):
+def test_optimize(coordinates_google, closed, max_distance):
     """Test limiting a solution to a fixed distance for both open and closed loops for various distances.
+    Makes sure none of the nodes are repeated in a route.
 
     :param closed: Closed or open loop solution
     :type closed: bool
     :param max_distance: Maximum distance for the solution
     :type max_distance: int
     """
-    n = len(distance_matrix_mip)
+    coordinates = random.sample(coordinates_google, 10)
+    n = len(coordinates)
     for i in range(n):
-        route_matrix, distance = tsp.optimize(distance_matrix_mip, starting_node=i, max_distance=max_distance, closed=closed)
-        route = [edge[0] for edge in tsp.get_edges_from_route_matrix(route_matrix)]
-        assert len(route) == len(set(route))
+        route, distance = tsp.optimize(coordinates, starting_node=i, max_distance=max_distance, closed=closed)
+        route_0 = [edge[0] for edge in route] # depart
+        route_1 = [edge[1] for edge in route] # arrive
+        assert len(route_0) == len(set(route_0))
+        assert len(route_1) == len(set(route_1))
         assert distance <= max_distance
-
-
-@pytest.mark.parametrize("max_distance", [100, None])
-@pytest.mark.parametrize("closed", [True, False])
-def test_same_result(coordinates_google, max_distance, closed):
-    """Tests constrained and non-constrained problems with open and closed loops using the google data.
-    """
-    distance_matrix = tsp.compute_euclidean_distance_matrix(random.sample(coordinates_google, 10))
-    rm_optimize, distance_optimize = tsp.optimize(distance_matrix, max_distance=max_distance, closed=closed)
