@@ -124,7 +124,8 @@ def test_nearest_neighbor_shortest_full_route(distance_matrix_mip):
         (0, 8), (8, 5), (5, 13), (13, 7), (7, 6), (6, 2), (2, 10), (10, 12), (12, 11), (11, 3), (3, 9), (9, 4), (4, 1), (1, 0)
     ]
 
-@pytest.mark.parametrize("max_distance,expected", [(0,0), (150,6), (200,7), (10000,14)])
+
+@pytest.mark.parametrize("max_distance,expected", [(0, 0), (150, 6), (200, 7), (10000, 14)])
 def test_nearest_neighbor_most_nodes_open(distance_matrix_mip, max_distance, expected):
     """Test the goal of finding the most number of nodes given a fixed distance.
     """
@@ -138,7 +139,8 @@ def test_nearest_neighbor_most_nodes_open(distance_matrix_mip, max_distance, exp
 
     assert most_nodes == expected
 
-@pytest.mark.parametrize("max_distance,expected", [(0,0), (150,5), (200,6), (10000,14)])
+
+@pytest.mark.parametrize("max_distance,expected", [(0, 0), (150, 5), (200, 6), (10000, 14)])
 def test_nearest_neighbor_most_nodes_closed(distance_matrix_mip, max_distance, expected):
     """Test the goal of finding the most number of nodes given a fixed distance.
     """
@@ -168,8 +170,8 @@ def test_optimize(coordinates_google, closed, max_distance):
     n = len(coordinates)
     for i in range(n):
         route, distance = tsp.optimize(coordinates, starting_node=i, max_distance=max_distance, closed=closed)
-        route_0 = [edge[0] for edge in route] # depart
-        route_1 = [edge[1] for edge in route] # arrive
+        route_0 = [edge[0] for edge in route]  # depart
+        route_1 = [edge[1] for edge in route]  # arrive
         assert len(route_0) == len(set(route_0))
         assert len(route_1) == len(set(route_1))
         assert distance <= max_distance

@@ -4,7 +4,7 @@ import random
 from typing import List, Tuple
 
 import numpy as np
-from mip import BINARY, Model, OptimizationStatus, Var, minimize, xsum
+from mip import BINARY, Model, OptimizationStatus, minimize, xsum
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=logging.DEBUG)
 
@@ -218,31 +218,28 @@ def nearest_neighbor_path(distance_matrix: Matrix, closed=False, start: int = No
 
 def optimize(
     coordinates: CoordinatesVector,
-    max_distance: int=None,
-    starting_node: int=None,
-    closed: bool=True,
-    use_nearest_neighbors: bool=False
-    ) -> Tuple[Matrix, int]:
+    max_distance: int = None,
+    starting_node: int = None,
+    closed: bool = True,
+    use_nearest_neighbors: bool = False
+) -> Tuple[Matrix, int]:
     """Attepmts to find the optimal soultion to a Traveling Salesman problem given a distance matrix and an optional cost-constraint.
     :param coordinates: List of coordinates to use for each node.
     :type coordinates: CoordinatesVector
     :param max_distance: The maximum distance of the solution which attempts to maximize the number of visited nodes, defaults to None
     :type max_distance: int, optional
-    :param starting_node: The node to start from as the solution. Mostly irrelevant for closed loops unless it improves time to converge, defaults to None
+    :param starting_node: The node to start from as the solution. Only for closed loops if to improve time to converge, defaults to None
     :type starting_node: int, optional
     :param closed: [description], defaults to True
     :type closed: bool, optional
-    :param use_nearest_neighbors: Whether to use the nearest_neighbors algorithm to solve the problem, instead of branch_and_cut, if possible, defaults to False
+    :param use_nearest_neighbors: Use the nearest_neighbors to solve the problem, instead of branch_and_cut, if possible, defaults to False
     :type use_nearest_neighbors: bool, optional
     :return: The route of the solution in the form of a list of each edge used, along with the distance of the solution.
     :rtype: Tuple[Matrix, int]
     """
 
-
     distance_matrix = compute_euclidean_distance_matrix(coordinates)
-
     assert 0 <= starting_node < len(distance_matrix), f"Starting node ({starting_node}) must be within range 0 to {len(distance_matrix)}"
-
 
     # use nearest neighbors algorithm
     if (max_distance is not None) or (use_nearest_neighbors is True):
@@ -261,19 +258,19 @@ def optimize(
                 logging.info(f'Solution: {np.sum(_route_matrix)} for {distance} from start {vertex}')
                 n_nodes = np.sum(_route_matrix)
 
-                if max_distance is not None: # optimize for most number of nodes
+                if max_distance is not None:  # optimize for most number of nodes
                     # TODO: allow for returning multiple solutions if there is more than one.
                     if n_nodes >= most_nodes:
                         most_nodes = n_nodes
                         route_matrix = _route_matrix
                         distance = _distance
 
-                else: #optimize for shortest path
+                else:  # optimize for shortest path
                     if distance < _distance:
                         distance = _distance
                         route_matrix = _route_matrix
 
-    else: # use branch and cut
+    else:  # use branch and cut
         if closed is False:
             logging.info('Closed loop argument is False but no max distance is specified. Running branch and cut.')
 
