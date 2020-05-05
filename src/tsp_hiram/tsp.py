@@ -120,9 +120,9 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
         for j in [x for x in range(1, n) if x != i]:
             model += y[i] - (n+1)*x[i][j] >= y[j]-n, 'noSub({},{})'.format(i, j)
 
-    # Use nearest neighbors to find an initial feasable solution
-    feasable_rm, feasable_distance = nearest_neighbor_path(distance_matrix, closed=True)
-    model.start = [(x[i][j], float(feasable_rm[i][j])) for i in range(n) for j in range(n)]
+    # Use nearest neighbors to find an initial feasible solution
+    feasible_rm, feasible_distance = nearest_neighbor_path(distance_matrix, closed=True)
+    model.start = [(x[i][j], float(feasible_rm[i][j])) for i in range(n) for j in range(n)]
 
     # optimizing
     model.optimize(max_seconds=max_seconds)
@@ -139,7 +139,7 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
 
 
 def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
-    """Simple nearest neighbor algorithm for finding a feasable path for the Traveling Salesman Problem.
+    """Simple nearest neighbor algorithm for finding a feasible path for the Traveling Salesman Problem.
 
     :param distance_matrix: matrix for the cost of each edge
     :type distance_matrix: List
@@ -215,6 +215,23 @@ def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_
 
 
 def optimize(distance_matrix, max_distance=None, starting_node=None, max_seconds=20, closed=True, use_nearest_neighbors=False):
+    """[summary]
+
+    :param distance_matrix: [description]
+    :type distance_matrix: [type]
+    :param max_distance: [description], defaults to None
+    :type max_distance: [type], optional
+    :param starting_node: [description], defaults to None
+    :type starting_node: [type], optional
+    :param max_seconds: [description], defaults to 20
+    :type max_seconds: int, optional
+    :param closed: [description], defaults to True
+    :type closed: bool, optional
+    :param use_nearest_neighbors: [description], defaults to False
+    :type use_nearest_neighbors: bool, optional
+    :return: [description]
+    :rtype: [type]
+    """
     assert len(distance_matrix) == len(distance_matrix[0]), "Invalid distance matrix. Must be 2D square."
 
     # use nearest neighbors algorithm
