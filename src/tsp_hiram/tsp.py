@@ -137,11 +137,13 @@ def branch_and_cut(distance_matrix: Matrix, max_seconds=20) -> Tuple[Matrix, int
         return route_matrix, 0
 
 
-def nearest_neighbor_path(distance_matrix, closed=False, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
+def nearest_neighbor_path(distance_matrix: Matrix, closed=False, start: int = None, max_distance: int = None) -> Tuple[Matrix, int]:
     """Simple nearest neighbor algorithm for finding a feasible path for the Traveling Salesman Problem.
 
     :param distance_matrix: matrix for the cost of each edge
     :type distance_matrix: List
+    :param closed: If a max_distance is set, whether the solution should be an open or closed loop, defaults to Open loop (False)
+    :type closed: bool, optional
     :param start: The node to start to search for a solution, defaults to a randomly chosen node
     :type start: int, optional
     :param max_distance: If None, find full path. Otherwise, constrain cost of the path to be >= max_distance, defaults to None
