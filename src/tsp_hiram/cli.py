@@ -15,12 +15,23 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 import argparse
+import csv
 
-parser = argparse.ArgumentParser(description='Command description.')
-parser.add_argument('names', metavar='NAME', nargs=argparse.ZERO_OR_MORE,
-                    help="A name of something.")
+from tsp_hiram import tsp
+
+parser = argparse.ArgumentParser(description='Solve Traveling Salesman Problem given a list of coordinates')
+parser.add_argument('filename', metavar='FILENAME', type=str, help="File containing the coordinates.")
+parser.add_argument('--max', type=int, default=None, help='Max distance of the path')
 
 
 def main(args=None):
     args = parser.parse_args(args=args)
-    print(args.names)
+    with open(args.filename, newline='') as csvfile:
+      reader = csv.reader(csvfile, delimiter = ',')
+      # TODO: More robust handling of csvreader. Currently just drops first row as header and makes a lot of assumptions
+      coordinates = [(int(x), int(y)) for [x,y] in [row for row in reader][1:]]
+      route, distance = tsp.optimize(coordinates, max_distance=args.max)
+      print(f'Solution with distance of {distance} found: {route}')
+      return route, distance
+
+
