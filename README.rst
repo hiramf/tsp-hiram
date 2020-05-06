@@ -34,9 +34,9 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/hiramf/tsp-hiram
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/hiramf/tsp-hiram/v0.2.3.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/hiramf/tsp-hiram/v0.2.1.svg
     :alt: Commits since latest release
-    :target: https://github.com/hiramf/tsp-hiram/compare/v0.2.3...master
+    :target: https://github.com/hiramf/tsp-hiram/compare/v0.2.1...master
 
 
 
@@ -72,11 +72,11 @@ This is a module than can be installed like any other normal Python package and 
 
 To use the CLI, run:
 
-.. code-block::
+.. code-block:: python
 
    tsp-hiram filename.csv --max 100
 
-Where ``filename.csv`` is a two column csv file of coordinates with a header and ``--max 100`` is an optional argument to set the maximum distance of the soution.
+Where ``filename.csv`` is a two column csv file of coordinates with a header and ``--max 100`` is an optional argument to set the maximum distance of the solution.
 
 
 
