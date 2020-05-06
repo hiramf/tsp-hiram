@@ -53,7 +53,7 @@ Solution Artifacts required:
 
 + Working Code
 + Unit Test Cases (can be run with Tox/pytest)
-+ Exception and Edge Cases: Documented in the log and accounted for the the code
++ Exception and Edge Cases: Documented in the log and accounted for in the code
 + Running `log <https://tsp-hiram.readthedocs.io/en/latest/log.html>`_ of the steps/process and everything which went on to solve this problem
 
 
