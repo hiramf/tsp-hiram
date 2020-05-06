@@ -20,7 +20,7 @@ def read(*names, **kwargs):
 
 setup(
     name='tsp-hiram',
-    version='0.2.2',
+    version='0.2.3',
     license='MIT',
     description="Hiram Foster's solution to the Traveling Salesman coding challenge.",
     long_description='%s\n%s' % (

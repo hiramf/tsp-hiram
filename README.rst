@@ -34,9 +34,9 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/hiramf/tsp-hiram
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/hiramf/tsp-hiram/v0.2.2.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/hiramf/tsp-hiram/v0.2.3.svg
     :alt: Commits since latest release
-    :target: https://github.com/hiramf/tsp-hiram/compare/v0.2.2...master
+    :target: https://github.com/hiramf/tsp-hiram/compare/v0.2.3...master
 
 
 
