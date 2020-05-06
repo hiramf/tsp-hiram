@@ -36,15 +36,15 @@ def compute_euclidean_distance_matrix(coordinates: CoordinatesVector) -> Matrix:
     return distances
 
 
-def get_edges_from_route_matrix(route_matrix: Matrix) -> Tuple:
-    """Generator which returns the next node in a route
+def get_edges_from_route_matrix(route_matrix: Matrix) -> List[Tuple]:
+    """Returns a list of the edges used in a route according to the route matrix
 
     :param route_matrix: A matrix indicating which edges contain the optimal route
     :type route_matrix: Matrix
     :return: The row and column for the edge in the matrix
     :rtype: Tuple
-    :yield: Generator which iteratively finds each subsequent node
-    :rtype: Iterator[Tuple]
+    :yield: List of tuples for each edge connecting two nodes
+    :rtype: List[Tuple]
     """
 
     def get_first_row(route_matrix):
