@@ -17,8 +17,8 @@ def main(args=None):
         route, distance = tsp.optimize(coordinates, max_distance=args.max)
 
         if args.max is not None:
-          print(f'{len(route)} nodes could be touched with max distance of {args.max}')
+            print(f'{len(route)} nodes could be touched with max distance of {args.max}')
         else:
-          print(f'Solution with distance of {distance} found: {route}')
+            print(f'Solution with distance of {distance} found: {route}')
 
         return route, distance
