@@ -1,6 +1,7 @@
 import csv
-import pytest
 import sys
+
+import pytest
 
 from tsp_hiram.cli import main
 
