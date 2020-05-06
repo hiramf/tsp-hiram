@@ -29,7 +29,7 @@ def coordinates_list():
     return data
 
 
-@pytest.mark.parametrize("max_distance,expected", [(None, 750), (100, 88)])
+@pytest.mark.parametrize("max_distance,expected", [(None, 750), (128, 126)])
 def test_main(monkeypatch, tmp_path, coordinates_list, max_distance, expected):
     """Tests the CLI with and without max distance parameter
     """
