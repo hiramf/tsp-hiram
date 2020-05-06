@@ -72,11 +72,11 @@ This is a module than can be installed like any other normal Python package and 
 
 To use the CLI, run:
 
-.. code-block:: python
+.. code-block::
 
    tsp-hiram filename.csv --max 100
 
-Where ```filename.csv``` is a two column csv file of coordinates with a header and ```--max 100``` is an optional argument to set the maximum distance of the soution.
+Where ``filename.csv`` is a two column csv file of coordinates with a header and ``--max 100`` is an optional argument to set the maximum distance of the soution.
 
 
 
