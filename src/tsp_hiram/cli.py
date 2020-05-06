@@ -15,5 +15,10 @@ def main(args=None):
         # TODO: More robust handling of csvreader. Currently just drops first row as header and makes a lot of assumptions
         coordinates = [(int(x), int(y)) for [x, y] in [row for row in reader][1:]]
         route, distance = tsp.optimize(coordinates, max_distance=args.max)
-        print(f'Solution with distance of {distance} found: {route}')
+
+        if args.max is not None:
+          print(f'{len(route)} nodes could be touched with max distance of {args.max}')
+        else:
+          print(f'Solution with distance of {distance} found: {route}')
+
         return route, distance
