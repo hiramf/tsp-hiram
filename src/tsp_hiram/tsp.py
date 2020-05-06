@@ -241,7 +241,8 @@ def optimize(
     distance_matrix = compute_euclidean_distance_matrix(coordinates)
 
     if starting_node is not None:
-        assert 0 <= starting_node < len(distance_matrix), f"Starting node ({starting_node}) must be within range 0 to {len(distance_matrix)}"
+        assert 0 <= starting_node < len(distance_matrix), \
+            f"Starting node ({starting_node}) must be within range 0 to {len(distance_matrix)}"
 
     # use nearest neighbors algorithm
     if (max_distance is not None) or (use_nearest_neighbors is True):
