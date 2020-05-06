@@ -44,22 +44,40 @@ Overview
 
 Hiram Foster's solution to the Traveling Salesman coding challenge.
 
-* Free software: MIT license
+There were two problems to solve:
+
+#. Given an input of list of co-ordinates find the path which is the shortest distance which touches ALL these points
+#. Given an input of list of co-ordinates and fixed distance identify the maximum number of points which can be touched
+
+Solution Artifacts required:
+
++ Working Code
++ Unit Test Cases (can be run with Tox/pytest)
++ Exception and Edge Cases: Documented in the log and accounted for the the code
++ Running `log <https://tsp-hiram.readthedocs.io/en/latest/log.html>`_ of the steps/process and everything which went on to solve this problem
+
 
 Installation
 ============
 
-::
-
-    pip install tsp-hiram
-
-You can also install the in-development version with::
+You can install the in-development version with::
 
     pip install https://github.com/hiramf/tsp-hiram/archive/master.zip
 
 
 Documentation
 =============
+
+This is a module than can be installed like any other normal Python package and imported into scripts, Jupyter, etc.
+
+To use the CLI, run:
+
+.. code-block:: python
+
+   tsp-hiram filename.csv --max 100
+
+Where ```filename.csv``` is a two column csv file of coordinates with a header and ```--max 100``` is an optional argument to set the maximum distance of the soution.
+
 
 
 https://tsp-hiram.readthedocs.io/

@@ -90,5 +90,6 @@ Day 7: 5/5/2020
 ################
 + Cleaned up tests and logic
 + Found an edge case where max distance set to zero results in the route being one node going to itself. This is applicable if there are no solutions that meet the requirements.
++ Created the CLI and tests for the cLI. It creates a temporary CSV file and runs it with and without a max distance
 
 
