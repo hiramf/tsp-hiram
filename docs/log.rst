@@ -65,6 +65,7 @@ Day 5: 5/3/2020
     + write tests
 
   + write CLI
+  + Add a scaling feature to the distance matrix because rounding can cause problems
   + Create a Dockerfile for deployment as an API
   + Visualize routes with networkx
   + Parallelize nearest_neighbour_algorithm with dash
@@ -73,7 +74,6 @@ Day 5: 5/3/2020
 + I added the ability to find a feasible solution for the TSP using nearest neighbors.
 + I also refactored how to process the results. I am now using a matrix representing the edges used in the solution. This way, the output for the branch_and_cut method and the nearest_neighbors method are the same.
 + I did some testing and np.zeros in computing the euclidian matrix did not improve speed, so I initialized a list of lists full of zeros with a list comprehension.
-+ I added a scaling feature to the distance matrix because rounding can cause problems.
 + Found an edge case for the nearest neighbors. If there is more than one nearest neighbor, check to make sure they have not been visited before.
 + Next step is to go from coordinates to solution. Currently, can go from coordinates to matrix, then matrix to solution, but I don't have test data to do both at once.
 
